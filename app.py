@@ -24,7 +24,7 @@ def landing():
         user = users.find_one({"_id": ObjectId(user_id)})
         return render_template("dashboard.html", user=user)
     
-    # Get upcoming events for landing page
+    # Get only 3 upcoming events
     upcoming_events = list(events.find({"date": {"$gte": datetime.now()}}).sort("date", 1).limit(3))
     return render_template("landing.html", events=upcoming_events)
 
@@ -42,12 +42,11 @@ def dashboard():
         flash("Please log in to access the dashboard", "warning")
         return redirect(url_for("loginpage"))
 
-    # Fetch all donations except the logged-in user's donations
-    all_donations = db["donations"].find({
-        "uploaded_by": {"$ne": session["email"]}  # Exclude current user's donations
-    })
-
-    return render_template("dashboard.html", donations=all_donations)
+    # Get user's donations and upcoming events
+    user_donations = list(donations.find({"uploaded_by": session["email"]}))
+    upcoming_events = list(events.find({"date": {"$gte": datetime.now()}}).sort("date", 1))
+    
+    return render_template("dashboard.html", donations=user_donations, events=upcoming_events)
 
 
 @app.route("/register", methods=["POST"])
@@ -312,20 +311,38 @@ def admin_login():
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if not session.get("admin"):
-        flash("Please login as admin", "error")
         return redirect(url_for("admin_login"))
-
-    # Get statistics
-    stats = {
-        "total_donations": donations.count_documents({}),
-        "total_requests": requests.count_documents({}),
-        "active_events": events.count_documents({"date": {"$gte": datetime.now()}})
-    }
-
-    # Get recent events
-    recent_events = list(events.find().sort("date", -1).limit(6))
-
-    return render_template("admin_dashboard.html", stats=stats, events=recent_events)
+    
+    try:
+        # Get stats
+        stats = {
+            "total_donations": donations.count_documents({}),
+            "total_requests": requests.count_documents({}),
+            "total_users": users.count_documents({}),
+            "active_events": events.count_documents({"date": {"$gte": datetime.now()}})
+        }
+        
+        # Get upcoming events
+        upcoming_events = list(events.find({"date": {"$gte": datetime.now()}}).sort("date", 1))
+        
+        # Get recent activities
+        recent_donations = list(donations.find().sort("timestamp", -1).limit(5))
+        recent_requests = list(requests.find().sort("timestamp", -1).limit(5))
+        
+        return render_template("admin_dashboard.html",
+                             stats=stats,
+                             events=upcoming_events,
+                             recent_donations=recent_donations,
+                             recent_requests=recent_requests)
+    except Exception as e:
+        print("Error in admin dashboard:", str(e))
+        flash("Error loading dashboard data", "error")
+        return render_template("admin_dashboard.html", stats={
+            "total_donations": 0,
+            "total_requests": 0,
+            "total_users": 0,
+            "active_events": 0
+        }, events=[], recent_donations=[], recent_requests=[])
 
 @app.route("/admin/add-event", methods=["POST"])
 def add_event():
@@ -333,20 +350,26 @@ def add_event():
         return redirect(url_for("admin_login"))
     
     try:
+        event_date = datetime.strptime(request.form.get("date"), "%Y-%m-%d")
+        event_time = datetime.strptime(request.form.get("time"), "%H:%M").time()
+        
         event_data = {
-            "name": request.form.get("name"),
-            "organizer": request.form.get("organizer"),
+            "eventName": request.form.get("eventName"),
+            "organizedBy": request.form.get("organizedBy"),
             "location": request.form.get("location"),
-            "date": datetime.strptime(request.form.get("date"), "%Y-%m-%d"),
-            "time": datetime.strptime(request.form.get("time"), "%H:%M").time(),
+            "date": event_date,
+            "time": event_time.strftime("%H:%M"),
             "createdAt": datetime.utcnow()
         }
-        events.insert_one(event_data)
+        print("Adding event:", event_data)  # Debug print
+        result = events.insert_one(event_data)
+        print("Event added with ID:", result.inserted_id)  # Debug print
         flash("Event added successfully!", "success")
     except Exception as e:
+        print("Error adding event:", str(e))  # Debug print
         flash(f"Error adding event: {str(e)}", "error")
 
-    return redirect(url_for("admin_events"))
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/events")
 def admin_events():
@@ -355,7 +378,7 @@ def admin_events():
         return redirect(url_for("admin_login"))
 
     all_events = list(events.find().sort("date", -1))
-    return render_template("admin_events.html", events=all_events)
+    return render_template("admin_dashboard.html", events=all_events)
 
 @app.route("/admin/delete-event/<event_id>", methods=["DELETE"])
 def delete_event(event_id):
@@ -394,8 +417,14 @@ def admin_logout():
 
 @app.route("/events")
 def view_events():
-    all_events = list(events.find().sort("date", -1))
-    return render_template("events.html", events=all_events, is_admin=False)
+    try:
+        upcoming_events = list(events.find({"date": {"$gte": datetime.now()}}).sort("date", 1))
+        print("Found events:", len(upcoming_events))  # Debug print
+        return render_template("events.html", events=upcoming_events)
+    except Exception as e:
+        print("Error fetching events:", str(e))  # Debug print
+        flash("Error fetching events", "error")
+        return render_template("events.html", events=[])
 
 if __name__ == "__main__":
     app.run(port=3000, debug=True)

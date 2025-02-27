@@ -80,37 +80,76 @@
     </nav>
 
     <!-- Hero Section -->
-    <!-- Hero Section -->
-<section class="hero-gradient text-white min-h-screen flex items-center pt-20 relative">
-    <div class="container mx-auto px-4 py-12 md:py-20 z-10 relative">
-        <div class="flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 md:pr-10">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                    Connect, Donate, <span class="underline decoration-4 decoration-white">Save Lives</span>
-                </h1>
-                <p class="text-xl mb-8 opacity-90">
-                    A simple yet powerful blood donation platform that connects donors with recipients, helps manage donation requests, and keeps you informed about upcoming blood donation camps.
-                </p>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                    <a href="/signup"><button class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full font-medium text-lg transition duration-300 shadow-lg hover:shadow-xl">
-                        Register Now
-                    </button></a>
-                    <a href="/loginpage"><button class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-red-700 px-8 py-3 rounded-full font-medium text-lg transition duration-300">
-                        Request Blood
-                    </button></a>
+    <section class="hero-gradient text-white min-h-screen flex items-center pt-20 relative">
+        <div class="container mx-auto px-4 py-12 md:py-20 z-10 relative">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-10">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Connect, Donate, <span class="underline decoration-4 decoration-white">Save Lives</span>
+                    </h1>
+                    <p class="text-xl mb-8 opacity-90">
+                        A simple yet powerful blood donation platform that connects donors with recipients, helps manage donation requests, and keeps you informed about upcoming blood donation camps.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+                        <a href="/signup"><button class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full font-medium text-lg transition duration-300 shadow-lg hover:shadow-xl">
+                            Register Now
+                        </button></a>
+                        <a href="/loginpage"><button class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-red-700 px-8 py-3 rounded-full font-medium text-lg transition duration-300">
+                            Request Blood
+                        </button></a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-12 md:mt-0">
+                    <img src="https://img.freepik.com/premium-photo/blood-donation-concept-awareness-donation_185193-132027.jpg?ga=GA1.1.884447661.1720511234&semt=ais_hybrid" alt="Blood Donation Illustration" class="rounded-lg shadow-2xl" />
                 </div>
             </div>
-            <div class="md:w-1/2 mt-12 md:mt-0">
-                <img src="https://img.freepik.com/premium-photo/blood-donation-concept-awareness-donation_185193-132027.jpg?ga=GA1.1.884447661.1720511234&semt=ais_hybrid" alt="Blood Donation Illustration" class="rounded-lg shadow-2xl" />
-            </div>
         </div>
-    </div>
-    <div class="absolute bottom-0 left-0 right-0 z-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,154.7C960,139,1056,149,1152,154.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-    </div>
-</section>
+        <div class="absolute bottom-0 left-0 right-0 z-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,154.7C960,139,1056,149,1152,154.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="bg-gray-50 py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Upcoming Blood Donation Events</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for event in events %}
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">{{ event.eventName }}</h3>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                            {{ event.date.strftime('%b %d, %Y') }}
+                        </span>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="flex items-center text-gray-600">
+                            <i class="fas fa-user-tie w-5 mr-2"></i>
+                            {{ event.organizedBy }}
+                        </p>
+                        <p class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt w-5 mr-2"></i>
+                            {{ event.location }}
+                        </p>
+                        <p class="flex items-center text-gray-600">
+                            <i class="fas fa-clock w-5 mr-2"></i>
+                            {{ event.time }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if events %}
+            <div class="text-center mt-8">
+                <a href="/events" class="btn-primary text-white px-8 py-3 rounded-lg inline-block">
+                    View All Events
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
 
     <!-- Features Section -->
     <section id="features" class="py-20 bg-white">
@@ -269,67 +308,13 @@
         </div>
     </section>
 
-    <!-- Blood Camp Events Section -->
-    <section id="events" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Upcoming Blood Donation Camps</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Stay informed about upcoming blood donation camps in your area. All events are added and managed by our administrators.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Event 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-calendar-day text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Community Blood Drive</h3>
-                    <p class="text-gray-500 mb-3"><i class="far fa-calendar-alt mr-2"></i>March 10, 2025</p>
-                    <p class="text-gray-500 mb-3"><i class="far fa-clock mr-2"></i>9:00 AM - 4:00 PM</p>
-                    <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>Central Community Center</p>
-                    <button class="btn-primary text-white px-4 py-2 rounded-full font-medium shadow-lg text-sm w-full">
-                        Learn More
-                    </button>
-                </div>
-                
-                <!-- Event 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-calendar-day text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">University Blood Drive</h3>
-                    <p class="text-gray-500 mb-3"><i class="far fa-calendar-alt mr-2"></i>March 15, 2025</p>
-                    <p class="text-gray-500 mb-3"><i class="far fa-clock mr-2"></i>10:00 AM - 3:00 PM</p>
-                    <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>State University Campus</p>
-                    <button class="btn-primary text-white px-4 py-2 rounded-full font-medium shadow-lg text-sm w-full">
-                        Learn More
-                    </button>
-                </div>
-                
-                <!-- Event 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <div class="bg-red-100 text-red-600 w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-calendar-day text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Corporate Blood Drive</h3>
-                    <p class="text-gray-500 mb-3"><i class="far fa-calendar-alt mr-2"></i>March 22, 2025</p>
-                    <p class="text-gray-500 mb-3"><i class="far fa-clock mr-2"></i>11:00 AM - 5:00 PM</p>
-                    <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>Tech Park Conference Center</p>
-                    <button class="btn-primary text-white px-4 py-2 rounded-full font-medium shadow-lg text-sm w-full">
-                        Learn More
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- CTA Section -->
     <section class="py-20 hero-gradient text-white">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Make a Difference?</h2>
             <p class="text-xl mb-8 max-w-2xl mx-auto">Register today to join our platform and help save lives through blood donation.</p>
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <button class="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium text-lg transition duration-300 shadow-lg hover:shadow-xl">
+                <button class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full font-medium text-lg transition duration-300 shadow-lg hover:shadow-xl">
                     Register Now
                 </button>
                 <button class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-red-700 px-8 py-3 rounded-full font-medium text-lg transition duration-300">
