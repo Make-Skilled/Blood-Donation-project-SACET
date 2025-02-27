@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | LifeStream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .btn-primary {
+            background: linear-gradient(135deg, #ff5757 0%, #8C0303 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(140, 3, 3, 0.2);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <svg class="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff5757"/>
+                </svg>
+                <span class="text-2xl font-bold text-gray-800">LifeStream</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="/my-donations" class="text-gray-700 hover:text-red-600">My Donations</a>
+                <a href="#" class="text-gray-700 hover:text-red-600">Profile</a>
+                <a href="/logout"><button class="btn-primary text-white px-6 py-2 rounded-full font-medium shadow-lg">
+                    Logout
+                </button></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-900">Available Donations</h2>
+        <div class="space-x-4">
+            <a href="/add-donation" class="btn-primary text-white px-4 py-2 rounded-lg text-sm shadow-md">
+                <i class="fas fa-plus-circle"></i> Add Donation
+            </a>
+            <a href="/show-requests" class="btn-primary text-white px-4 py-2 rounded-lg text-sm shadow-md">
+                <i class="fas fa-list"></i> My Requests
+            </a>
+        </div>
+    </div>
+
+    <!-- Donations Grid -->
+    <div class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 py-8">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {% for donation in donations %}
+                <div class="card-hover bg-white rounded-lg shadow-lg p-6">
+                    <div class="aspect-square w-full rounded-md bg-gray-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-tint text-6xl text-red-600"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-xl font-medium text-gray-900">
+                            Blood Type: <span class="font-bold text-red-600">{{ donation.bloodGroup }}</span>
+                        </h3>
+                        <p class="text-gray-600">
+                            <i class="fas fa-user mr-2"></i>
+                            Donor: {{ donation.donorName }}
+                        </p>
+                        <p class="text-gray-600">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Location: {{ donation.address }}
+                        </p>
+                        <p class="text-lg font-bold text-red-700">
+                            <i class="fas fa-flask mr-2"></i>
+                            {{ donation.quantity }} Units Available
+                        </p>
+                        <button onclick="openRequestModal('{{ donation._id }}', '{{ donation.bloodGroup }}', '{{ donation.quantity }}', '{{ donation.uploaded_by }}', '{{ donation.mobileNo }}')" 
+                                class="w-full mt-4 btn-primary text-white px-4 py-2 rounded-lg text-sm shadow-md">
+                            <i class="fas fa-hand-holding-medical mr-2"></i>
+                            Request Donation
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div id="requestModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Request Blood Donation</h3>
+                <form id="requestForm" action="/submit-request" method="POST">
+                    <input type="hidden" id="donationId" name="donationId">
+                    <input type="hidden" id="donorEmail" name="donorEmail">
+                    <input type="hidden" id="donorMobile" name="donorMobile">
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Blood Group</label>
+                        <input type="text" id="bloodGroup" class="w-full px-3 py-2 border rounded-lg" readonly>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Available Units</label>
+                        <input type="number" id="availableUnits" class="w-full px-3 py-2 border rounded-lg" readonly>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Required Units</label>
+                        <input type="number" name="requiredUnits" class="w-full px-3 py-2 border rounded-lg" required min="1">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Your Mobile Number</label>
+                        <input type="tel" name="receiverMobile" class="w-full px-3 py-2 border rounded-lg" required pattern="[0-9]{10}">
+                    </div>
+
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="closeRequestModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">Cancel</button>
+                        <button type="submit" class="btn-primary text-white px-4 py-2 rounded-lg">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openRequestModal(donationId, bloodGroup, quantity, donorEmail, donorMobile) {
+            document.getElementById('requestModal').classList.remove('hidden');
+            document.getElementById('donationId').value = donationId;
+            document.getElementById('bloodGroup').value = bloodGroup;
+            document.getElementById('availableUnits').value = quantity;
+            document.getElementById('donorEmail').value = donorEmail;
+            document.getElementById('donorMobile').value = donorMobile;
+        }
+
+        function closeRequestModal() {
+            document.getElementById('requestModal').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">&copy; 2025 LifeStream. All rights reserved. A blood donation management system.</p>
+        </div>
+    </footer>
+</body>
+</html>
