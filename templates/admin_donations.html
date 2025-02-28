@@ -36,7 +36,6 @@
             </div>
             <div class="flex items-center space-x-6">
                 <a href="/admin/dashboard" class="text-gray-700 hover:text-red-600">Dashboard</a>
-                <a href="/admin/events" class="text-gray-700 hover:text-red-600">Events</a>
                 <a href="/admin/requests" class="text-gray-700 hover:text-red-600">Requests</a>
                 <a href="/admin/logout"><button class="btn-primary text-white px-6 py-2 rounded-full font-medium shadow-lg">
                     Logout
@@ -76,28 +75,15 @@
                             <i class="fas fa-user mr-2"></i>{{ donation.donorName }}
                         </p>
                         <p class="text-sm text-gray-600">
-                            <i class="fas fa-envelope mr-2"></i>{{ donation.donorEmail }}
+                            <i class="fas fa-envelope mr-2"></i>{{ donation.address }}
                         </p>
                         <p class="text-sm text-gray-600">
-                            <i class="fas fa-phone mr-2"></i>{{ donation.donorMobile }}
+                            <i class="fas fa-phone mr-2"></i>{{ donation.mobileNo }}
                         </p>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Medical Information</h3>
-                    <div class="mt-2 space-y-1">
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-heartbeat mr-2"></i>Blood Pressure: {{ donation.bloodPressure }}
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-weight mr-2"></i>Weight: {{ donation.weight }} kg
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-thermometer-half mr-2"></i>Temperature: {{ donation.temperature }}°C
-                        </p>
-                    </div>
-                </div>
+                
 
                 <div class="border-t pt-4">
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Status</h3>
@@ -108,7 +94,7 @@
                             {% else %}
                                 bg-yellow-100 text-yellow-800
                             {% endif %}">
-                            {{ donation.status }}
+                            {{ donation.quantity }}ml
                         </span>
                     </div>
                 </div>

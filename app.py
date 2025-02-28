@@ -43,7 +43,7 @@ def dashboard():
         return redirect(url_for("loginpage"))
 
     # Get user's donations and upcoming events
-    user_donations = list(donations.find({"uploaded_by": session["email"]}))
+    user_donations = list(donations.find())
     upcoming_events = list(events.find({"date": {"$gte": datetime.now()}}).sort("date", 1))
     
     return render_template("dashboard.html", donations=user_donations, events=upcoming_events)
@@ -374,11 +374,34 @@ def add_event():
 @app.route("/admin/events")
 def admin_events():
     if not session.get("admin"):
-        flash("Please login as admin", "error")
         return redirect(url_for("admin_login"))
-
-    all_events = list(events.find().sort("date", -1))
-    return render_template("admin_dashboard.html", events=all_events)
+    
+    try:
+        # Get stats
+        stats = {
+            "total_donations": donations.count_documents({}),
+            "total_requests": requests.count_documents({}),
+            "total_users": users.count_documents({}),
+            "active_events": events.count_documents({"date": {"$gte": datetime.now()}})
+        }
+        
+        # Get all events
+        all_events = list(events.find().sort("date", 1))
+        
+        return render_template("admin_dashboard.html", 
+                             stats=stats,
+                             events=all_events)
+    except Exception as e:
+        print("Error in admin events:", str(e))
+        flash("Error loading events data", "error")
+        return render_template("admin_dashboard.html", 
+                             stats={
+                                "total_donations": 0,
+                                "total_requests": 0,
+                                "total_users": 0,
+                                "active_events": 0
+                             }, 
+                             events=[])
 
 @app.route("/admin/delete-event/<event_id>", methods=["DELETE"])
 def delete_event(event_id):

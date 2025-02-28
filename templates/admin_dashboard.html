@@ -44,7 +44,6 @@
                 <span class="text-2xl font-bold text-gray-800">LifeStream Admin</span>
             </div>
             <div class="flex items-center space-x-6">
-                <a href="/admin/events" class="text-gray-700 hover:text-red-600">Events</a>
                 <a href="/admin/donations" class="text-gray-700 hover:text-red-600">Donations</a>
                 <a href="/admin/requests" class="text-gray-700 hover:text-red-600">Requests</a>
                 <a href="/admin/logout"><button class="btn-primary text-white px-6 py-2 rounded-full font-medium shadow-lg">
@@ -65,7 +64,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">Total Donations</p>
-                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_donations }}</h3>
+                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_donations if stats else 0 }}</h3>
                     </div>
                     <div class="p-3 bg-red-100 rounded-full">
                         <i class="fas fa-heart text-red-600 text-xl"></i>
@@ -78,7 +77,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">Active Requests</p>
-                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_requests }}</h3>
+                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_requests if stats else 0 }}</h3>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-full">
                         <i class="fas fa-hand-holding-medical text-blue-600 text-xl"></i>
@@ -86,12 +85,12 @@
                 </div>
             </div>
 
-            <!-- Total Events -->
+            <!-- Active Events -->
             <div class="stat-card rounded-xl p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-500 text-sm">Total Events</p>
-                        <h3 class="text-2xl font-bold gradient-text">{{ stats.active_events }}</h3>
+                        <p class="text-gray-500 text-sm">Active Events</p>
+                        <h3 class="text-2xl font-bold gradient-text">{{ stats.active_events if stats else 0 }}</h3>
                     </div>
                     <div class="p-3 bg-green-100 rounded-full">
                         <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
@@ -104,7 +103,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">Registered Users</p>
-                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_users }}</h3>
+                        <h3 class="text-2xl font-bold gradient-text">{{ stats.total_users if stats else 0 }}</h3>
                     </div>
                     <div class="p-3 bg-purple-100 rounded-full">
                         <i class="fas fa-users text-purple-600 text-xl"></i>
